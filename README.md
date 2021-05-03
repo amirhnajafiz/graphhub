@@ -19,5 +19,3 @@ To form the page I used bootstrap grid made by mysefl. Its a usefull way to mana
 in a webpage.
 
 Also used the "Yekan" font, imported by fontface order.
-
-Contact me at : najafizadeh21@gmail.com or officialamirhossein21@gmail.com
