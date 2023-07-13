@@ -1,9 +1,8 @@
 # OpenStack
 
-![]()
-![]()
-![]()
-![]()
+![](https://img.shields.io/badge/topic-openstack-darkred)
+![](https://img.shields.io/badge/course-cloudcomputing-lightblue)
+![](https://img.shields.io/badge/version-v0.0.1-green)
 
 ```OpenStack``` is a software and hypervisor manager which helps us to create, manage, and remove virtual machines on single or multiple nodes.
 By node I mean a live computer or server that has an static IP address. ```OpenStack``` helps us to create virtual machines
