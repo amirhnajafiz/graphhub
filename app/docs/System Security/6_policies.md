@@ -63,6 +63,72 @@ Subjects inherit the userid, group and supplemantry groups of the parent. File p
 - __Real__: the real user that is logged on, and on whose behalf a process is running
 - __Saved__: allows processes to temporarily relinquish privileges but then restore original privileges
 
+#### In Linux
+
+- __Owner__: the user who created a file or directory is its owner.
+- __User__: any person or system component with a user account on the system.
+- __Group__: a collection of users. each user belongs to at least one group, and each file has a group associated with it.
+
+In order to see system users as `root`, you can `cat /etc/passwd`. This file is like this:
+
+```s
+root:x:0:0:root:/root:/bin/bash
+user1:x:1001:1001::/home/user1:/bin/bash
+alice:x:1002:1002::/home/alice:/bin/bash
+```
+
+Every file or directory in Linux has an owner and belongs to a group:
+
+```sh
+-rw-r--r-- 1 user1 group1 1024 Oct  7 10:00 file.txt
+```
+
+The following commands are used for manage users and groups:
+
+- add a user: `useradd <username>`
+- set user a password: `passwd <password>`
+- create a group: `groupadd <groupname>`
+- add a user to a group: `usermod -aG <group> <user>`
+- view group memberships: `groups <username>`
+
+To change file and directory permissions, these commands are used:
+
+- change ownership: `chown <user>:<group> <file>`
+- change permissions: `chmod <permissions> <file>`
+
+These permissions are for owner, group, and others. Each digit represents the sum of permissions:
+
+- 4 = Read
+- 2 = Write
+- 1 = Execute
+
+For example, `755` means:
+
+- Owner: read/write/execute
+- Group: read/execute
+- Others: read/execute
+
+##### Add user for SSH
+
+1. Create the user: `sudo useradd -m -s /bin/bash <username>`
+2. Set password for user: `sudo passwd <username>`
+3. Enable SSH access for the user:
+   1. switch to user: `su - <username`
+   2. create `.ssh` directorie: `mkdir ~/.ssh && chmod 700 ~/.ssh`
+   3. add user public key: `echo "<user-public-key> >> ~/.ssh/authorized_keys" && ~/.ssh/authorized_keys`
+   4. check `/etc/ssh/sshd_config` for `PubkeyAuthentication yes`
+   5. restart ssh service: `sudo systemctl restart sshd`
+4. To add password authentication
+   1. edit `/etc/ssh/sshd_config` for `PasswordAuthentication yes, PermitRootLogin no`
+   2. restart ssh service: `sudo systemctl restart sshd`
+
+Now users can login using ssh:
+
+```sh
+ssh <username>@<server-ip>
+ssh -i <private-key-file> <username>@<server-ip>
+```
+
 ## Capabilities
 
 They are tickets to gain access to a resource. Combine objects and access rights into one package is what they do. They are transferable and must be unforgeable.
