@@ -1,74 +1,73 @@
 # Processor and Virtual Machine Security
 
+In this chapter, we focuse on processors and VMs security levels. Moreover, we will see how we can use VMs in security applications.
+
 ## Processor Security
 
 Processors operate at multiple privilege levels. At least two levels
 are needed, privileged and unprivileged.
-- Ring 0 is highes privilege
-- Ring 3 is lowest privilege
 
-OS kernel runs in Ring 0, while user-level code executes in unprivileged mode.
-Improtant processor state can be changed only throught the execution of privileged
-instruction.
+- __Ring 0__ is highes privilege (kernel-level)
+- __Ring 3__ is lowest privilege (user-level)
+
+OS kernel runs in Ring 0, while user-level code executes in unprivileged mode. Improtant processor state can be changed only throught the execution of privileged instruction.
 
 - Page tables
 - I/O devices
 
-## Virtualization
+As a result, only the kernel code can change critical processor state. However, there is no control for transfers across privilege levels. So, privileged crossings are usually effected via interrupts. These interrupts are like request messages.
 
-Creation of logical instances of physical resources. Same functions, without
-rewriting the whole thing.
+## Virtualization is OSes
+
+Creation of logical instances of physical resources. Same functions, without rewriting the whole thing. Resources to virtualize are:
+
 - CPU
 - Memory
-- I/O
+- I/O devices
 
-Some resources are shared using high level interfaces rather than virtualization.
-
-Since only OS can control and manage system resources and share them
-safely across user-level processes, resources are often virtualized.
-It is as if a user-level process has an exclusive, private copy of that
+Some resources are shared using high level interfaces rather than virtualization. Since only OS can control and manage system resources and share them safely across user-level processes, resources are often virtualized. It is as if a user-level process has an exclusive, private copy of that
 resource.
 
-One key problem is that there is no control in transfers across privilege levels.
-Transfering access between privileged and unprivileged levels are trough
-system interrupts.
+## System Virtualization
 
-### System Virtualization
+Creates several virtual systems within a single physical system. This virtual should still provide privileged instructions, so that OS kernels can run on top. __VVM (hypervisor)__ is the software layer providing the virtualization. VM runs on top of the VMM. VMM runs in kernel-level (Ring 0).
 
-Creates several virtual systems within a single physical system.
-VVM (hypervisor) is the software layer providing the virtualization.
-VM runs on top of the VMM. VMM runs in kernel-level (Ring 0).
+### Process virtualization
 
-#### Process virtualization
+The VM supports an application binary interface that uses interrupts and system-calls. (JWM)
 
-The VM supports an application binary interface that uses interrupts
-and system-calls. (JWM)
+### OS or Namespace virtualization
 
-#### OS or Namespace virtualization
+Having multiple logical VMs that share the same OS kernel. Isolates VMs by partitioning all objects into namespaces. (Docker, vServer)
 
-Having multiple logical VMs that share the same OS kernel. Isolates
-VMs by partitioning all objects into namespaces. (Docker, vServer)
-
-#### Full virtualization
+### Full virtualization
 
 The VM supports a complete ISA and user and system instructions. (VirtualBox)
 
-### VMM Architecture
+### VMM Architectures
+
+There are two types of VMM, __baremetal__ and __hosted__.
 
 #### Type 1 (baremetal)
 
-The VMM runs on base hardware.
+The VMM runs on bare hardware.
 
 ```
----
-guest application
--
-multi guest OS
--
-VMM
--
-host hardware
----
+|+++++++++++++++++++| |+++++++++++++++++++|
+| guest application | | guest application |
+|+++++++++++++++++++| |+++++++++++++++++++|
+===========================================
+|++++++++++++++++++|
+|  multi guest OS  |
+|++++++++++++++++++|
+===========================================
+|+++++++++++++++++++|
+|        VMM        |
+|+++++++++++++++++++|
+===========================================
+|+++++++++++++++++++|
+|   host hardware   |
+|+++++++++++++++++++|
 ```
 
 #### Type 2 (hosted)
@@ -76,62 +75,71 @@ host hardware
 The VMM runs as an ordinary application inside host OS.
 
 ```
----
-guest application
--
-multi guest OS
--
-VMM
--
-host OS
--
-host hardare
----
+|+++++++++++++++++++| |+++++++++++++++++++|
+| guest application | | guest application |
+|+++++++++++++++++++| |+++++++++++++++++++|
+===========================================
+|++++++++++++++++++|
+|  multi guest OS  |
+|++++++++++++++++++|
+===========================================
+|+++++++++++++++++++|
+|        VMM        |
+|+++++++++++++++++++|
+===========================================
+|+++++++++++++++++++++++|
+| host operating system |
+|+++++++++++++++++++++++|
+===========================================
+|+++++++++++++++++++|
+|   host hardware   |
+|+++++++++++++++++++|
 ```
 
-### Issues
+### Key issues in CPU virtualization
 
-- Protection levels
-- Requirement for efficient virtualization
-- Which instructions are privileged?
+- Protection levels.
+- Requirement for efficient virtualization. Privileged instructions will be executed as traps if they come from user-level. Sensitive instructions are the ones that affect important system state. Therefore, if an instruction is privileged and sensitive, it can support efficient __trap and emulate__ approach.
+- For x86, not all sensitive instructions are privileged.
 
 ### Virtualization Approaches
 
-- Full virtualization using binary translation: needs disassemble the binary, identify instructions and patch them (like VMware or QEMU)
-- Paravirtualization: OS modified to run on VMM, then it uses Hypercalls (like Xen)
-- Harware-assisted virtualization: OS requests trap to VMM without binary translation or paravirtualization (most VMMs today)
+- __Full virtualization__ using binary translation: needs disassemble the binary, identify instructions and patch them. Rely dynamic disassembly and translation in order to make disassembly tractable, and to support dynamic changes to code. (like VMware or QEMU)
+- __Paravirtualization__: OS modified to run on VMM, then it uses Hypercalls. It is no longer 100% interface compatible, but has better performance. (like Xen)
+- __Harware-assisted virtualization__: OS requests trap to VMM without binary translation or paravirtualization. Separates CPU execution into two modes. Hypervisor executes in host mode, and all VMs execute in guest mode. (most VMMs today)
 
 ### Memory Virtualization
 
-Physical memory is divided among multiple VMs with two levels of translation in Guest OS and VMM.
-By using shadow page, when guest attempts to update, VMM intercepts and emulate the effects on the
-corresponding shadow page table.
+Access to MMU needs to be virtualized, otherwise guest OS may directly access physical memory and subvert VMM. Physical memory is divided among multiple VMs with two levels of translation in Guest OS and VMM.
+
+- Guest OS: guest virtual addr $\to$ guest physical addr
+- VMM: guest physical addr $\to$ machine addr
+
+Shadow page table is needed to avoid 2-step translation. By using shadow page, when guest attempts to update, VMM intercepts and emulate the effects on the corresponding shadow page table.
 
 ### I/O Virtualization
 
-The VMM intercepts guest's I/O-performing instructions.
-Performs necessary actions to emulate their effect.
-This emulations leads to low performance for most I/O operations.
-Compared to CPU and memory, that are executed with less extra operations.
+The VMM intercepts guest's I/O-performing instructions. Performs necessary actions to emulate their effect. This emulations leads to low performance for most I/O operations. Compared to CPU and memory, that are executed with less extra operations.
 
-## VMs security
+## VMs security applications and concerns
 
 ### Security Applications
 
 VM technology provides strong isolation that is necessary to run malware
 without undue risks. (Strong resource isolation and snapshot/restore features)
 
-- Honypots systems
-- Malware analysis
+- __Honypots systems__
+- __Malware analysis__
 
-Basically, it is using VMs for less damage and keep alignment in guest OS.
-Also, it provides protection from compromised OSes. Running malware and
-rootkit detection techniques in VMM, or enforce security properties from
-within the VMM.
+Basically, it is using VMs for less damage and keep alignment in guest OS. Also, it provides protection from compromised OSes. Running malware and rootkit detection techniques in VMM, or enforce security properties from within the VMM.
+
+#### Rootkit
+
+A rootkit, is a set of software tools that enable an unauthorized user to gain control of a computer system without being detected.
 
 ### Security challenges in virtualized environments
 
-Since virtualization leads to co-tenancy, it has challenges.
+Since virtualization leads to __co-tenancy__, it has challenges.
 
 - VMs belonging to distinct principals use the same hadrware. Therefor, it needs strong isolation.
 - It provides increased opportunities for side-channel attacks.
@@ -139,19 +147,17 @@ Since virtualization leads to co-tenancy, it has challenges.
 
 ### Docker security
 
-It uses namespaces and cgroups to isolate its containers.
-It also has a container infrastructure and services (docker daemon).
+It uses __namespaces__ and __cgroups__ to isolate its containers. It also has a container infrastructure and services (__docker daemon__). Containerscan share files with the host OS, but this can be dangerous since it can allow root user in a container to change critical host OS files.
 
-#### Attack vectors
+#### Docker attack vectors
 
-- Shared kernel
-- Docker daemon needs root privileges
-- Apps can reach to the host
+- Shared kernel: it is using same OS kernel across different containers. Any kernel vulnerabilities may be exploited.
+- Docker daemon needs root privileges. So, malicious processes may abuse this privilege.
+- Apps running within Docker can reach to the host by sharing folders. Or, root processes inside container can possibly execute systemcalls as root on host.
 
-#### Best practices
+#### Docker security practices
 
-- Avoid root privilege
-- Limit further using linux capabilities
-- Use seccomp-bpf to limit system calls that can be made by processes within the container
-- Avoid using untrusted softwares
-
+- Avoid root privilege.
+- Limit further using linux capabilities.
+- Use seccomp-bpf to limit system calls that can be made by processes within the container.
+- Avoid using untrusted software.
