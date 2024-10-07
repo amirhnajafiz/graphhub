@@ -1,204 +1,269 @@
 # Memory Errors: Exploits and Defenses
 
-## Memory layout in stack
+This chapter aims for memory exploits and its defenses. Although, today, compilers and programming languages are designed in a manner that are safe againts memory errors. Nevertheless, bad developing can open ways for attackers to perform their attacks.
 
-```
--- high mem
-argv, env
-stack : local variables
+## Memory layout in Stack
 
-heap : dynamic memory allocation
-bss : uninit global data
-data : init global data
-text : functions
--- low mem
+Stack is a memory that is used to store applications data. Your application has input arguments, environment variables, local variables, arrays, etc.
+
+Here is a view of the Stack layout for your applications.
+
+| High memory | - |
+|---|---|
+| argv, env   | command-line args and environment |
+| stack       | generally grows downwards |
+| heap        | generally grows upwards |
+| bss         | uninitialized global data |
+| data        | initialized global data |
+| text        | read-only program code |
+| __Low memory__  | _-_ |
+
+In code example:
+
+```c
+int a = 1; // Data
+int b; // BSS
+
+// Text
+int main(int argc, char **argv) /* ptr to argv */
+{
+    int *c; // Stack (local variable)
+    c = (int *)malloc(5 * sizeof(int)); // Heap (dynamic allocation)
+}
 ```
 
 ## Call stack (Activation Record / Stack Frame)
 
-Creates for each procedure.
-Structure:
+An activation record is created for each procedure.
 
-- Actual params
-- Return value
-- Return address
-- Saved base pointer (frame pointer)
-- Local variables
-- Temp variables
+Structure of stack frame:
+
+| High memory (direction of stack growth is downgrade) |
+|-------------|
+| Actual parameters |
+| Return value |
+| Return address |
+| Saved BP (base pointer / frame pointer) |
+| Local variables |
+| Temporary variables |
 
 ## Stack access
 
-Most items on the stack are accessed relative to Base pointer. A hard-coded offset into binary.
-Stack pointer moves on push/pop. However, base pointer only moves on function call/return.
+Most items on the stack are accessed relative to __Base Pointer__.
+Typically they can get accessed using a hard-coded offset into binary.
+__Stack Pointer (SP)__ moves on push/pop.
+However, base pointer only moves on function call/return.
 
 ### Caller to Callee
 
+When caller calls a callee, first it push all params onto stack in reverse order. Then it performs the following tasks in order:
+
 1. Push base pointer onto stack. (save previous function base pointer)
 2. Copy stack pointer to base pointer.
-3. reserves stack space for local vars.
+3. Reserve stack space for local vars.
 
 ### Callee to Caller
 
+After the callee is done, it performs these tasks in order:
+
 1. Store return value in `eax` or `rax`.
-2. Reset stack to pre-call state.
+2. Reset stack to pre-call state. Destroys current stack frame, and restores caller's frame.
 3. Return control back to the caller.
 
 ## Stack Smashing
 
-Attacker controls the buffer.
+Stack smashing is a attack that cases a stack buffer overflow. Typically, a program starts writing more data to a buffer than it is capable of holding. An attacker can use this attack to control the buffer.
 
 ### Defense 1: Non-executable data (DEP, NX, W XOR X)
 
-Prevent execution of data that counters direct code injection.
+The first defense solution is non-executable data.
+Prevent execution of data to block code executes.
+It counters direct code injection.
+However, to pass this defense, two attacks are used, __Return to libc__ and __Return-oriented programming (ROP)__.
 
 ### Evasion 1.1: Return to libc
 
 Use code that already is in process memory.
-libc is the low-level system library that is part of every program.
-Basically running /bin/bash by using return to libc and controlling the arguments on stack.
+Because exploitable functions are there in __libc__ which is the low-level system library that is part of every program. Example:
+
+- `system`
+- `execve`
+
+Attacker needs to control the arguments to this function. Since the attacker controls the stack contents, and the function is getting its arguments from the atack.
+
+Typicall attack will be executed by running /bin/bash by using return to libc and controlling the arguments on stack.
 
 ### Revasion 1.2: Return-Oriented Programming (ROP)
 
-Using stack pointer as the attacker's program counter.
-As an attacker, don't limit yourself on one or two functions. Instead, use the victim's code as
-your data. Store your code on stack and use gadgets to execute it.
-Pick your code bytes from user code using these gadgets.
+In this technique, an attacker gains control of the call stack (stack pointer) to hijack program control flow and then executes carefully chosen machine instruction sequences that are already present in the machine's memory, called __gadgets__.
+
+To put it in simple words, this attack involves using the stack pointer as the attacker's program counter. Then, use the victim's code as your data. Store code on stack and use gadgets to execute it in order.
 
 ### Defense 2: Stack Canary
 
-Calle generates and stores a canary value on function entry. This value is checked at return.
-If the canary is dead, then abort the program. Turning control-flow hijack into DoS.
+To block the previous attacks, callee stores a __canary__ value on the stack.
+Callee generates and stores a canary value on function entry. This value is checked at return. If the canary is dead, then abort the program to turn __control-flow hijack__ into __DoS (denial of service)__.
 
-#### Canary Issues
+#### Canary defense issues
 
-Fixed values can be detected by attackers.
-Random canary is better, but the attack can rely on a vulnerability that reveals canary value.
-XOR canary avoids the need for an additional location. However, it's hard to trace and debug.
+1. Fixed values for canary can be detected by attackers.
+2. Random canary is better, but the attack can rely on a vulnerability that reveals canary value.
+3. XOR canary avoids the need for an additional location. However, it breaks compatibility stack tracing and debuggers.
 
 ### ProPolice
 
-1. Create a random canary value at process start time
+This technique is also called contemporary canary-based defense. The goal is to change the values in the stack memory to prevent the stated attacks.
+
+It includes the following steps:
+
+1. Create a random canary value at process start time.
 2. Protect return address and base pointer by locating canary below saved base pointer.
 3. Reorder local variables so that simple variables occur after variables subject to overflow.
 
-Structure:
+The stack structure after applying these steps becomes:
 
-```
--- high mem
-RA
-Saved BP
-Canary
-Array type local vars
-Non-array type local vars
--- low mem
-```
+| High memory (direction of stack growth is downgrade) |
+|-------------|
+| Old stack frame |
+| parameter #N |
+| ... |
+| parameter #1 |
+| RA |
+| Saved BP |
+| Canary |
+| Array-type local variables |
+| Non-array type local variables |
 
 ### Bypassing canaries
 
-- Indirect (aka double pointer) overwrite vulnerability is still an issue.
-- Brute-force attacks: try every possible value for canary until you succeed.
-- Partial overwrite: guess the canary 1-byte at a time
-- Information leaks: using format-string vulnerability to get memory locations.
+There are some methods to bypass the canary. In order words, the attacker can still perform attacks without killing the canary.
 
-### Other defenses
+- Indirect (aka double pointer) overwrite vulnerability. This attacks needs a dobule pointer in code to change it's pointing location to base pointer's location. Therefore, it will jump over canary.
+- Brute-force attacks in which attackers try every possible value for canary until you succeed.
+- Partial overwrite in which attackers guess the canary 1-byte at a time.
+- Information leaks, which exploits a memory error that allows reading arbitrary memory location. A common example is __format string__ attack. When the victim contains `printf(s)` with `s` provided by attacker. Then, `printf` blindly interprets stack contents as arguments.
 
-- Shadow Stack: store a copy of return address
-- Safe Stack: no arrays of any kind on the stack
+### Other defenses for return address
+
+- __Shadow Stack__: In this method, we store a copy of return address in a place that is unwritable.
+- __Safe Stack__: In this method, no arrays of any kind are on the stack. Already implemented into some compilers like LLVM.
 
 ## Beyond Stack Smaching
 
+In this section, we take a look at attacks on other parts of the memory, since stack is not the only memory that is being used by applications.
+
 ### Overflows in Heap-allocated buffers
 
-Since there is no return address nearby, attackers should overwrite other code pointers like
-heap metadata or a function pointer.
+For a buffer allocated on the heap, there is no return address nearby. So, attackers should overwrite other code pointers like heap metadata or a function pointer.
 
-Heap metadata overwrite, provides a primitive to write an attacker chosen value to an attacker
-chosen location.
+#### Heap metadata overwrite
 
-Some systematic solutions are Heap canaries and separate metadata from data.
+When a pointer that has not been properly initialized or has already been freed is used, it can overwrite critical heap metadata. This can corrupt the allocator's view of the heap, causing unpredictable behavior. Which is ofcourse, predictable by the attacker.
+
+It provides a primitive to write an attacker chosen value to an attacker
+chosen location. Any doubly linked list implementation has this vulnerability. Some systematic solutions are __Heap Canaries__ and __separate metadata from data__.
 
 ### Format-string vulnerabilities
 
-Exploits code of the form to read data from attacker into a string. Since printf usual reads memory
-, by passing `%n` you can get memory locations on stack.
+Exploits code of the form to read data from attacker into a string. The key is `printf` function. `printf` usually reads memory. The `%n` primitive allows for a memory write. It writes the number of characters printed so far.
+
+According to the `printf()` main page, here is what `%n` should do:
+
+- The number of characters written so far is stored into the integer indicated by the `int * (or variant)` pointer argument. No argument is converted.
+
+The primitive, write `#` of chars printed to an attacker-chosen location. Below are some format parameters which can be used and their consequences:
+
+- `%x` Read data from the stack
+- `%s` Read character strings from the process' memory
+- `%p` Read strings from the process' memory
+- `%n` Write an integer to locations in the process' memory
 
 ### Integer overflows
 
-Multiple forms:
-- variables of different widths
-- variables of different signs
-- arithmetic overflows
+Integer overflows can take multiple forms:
+
+- variables of different widths.
+- variables of different signs.
+- arithmetic overflows.
+
+These can subvert bounds and size checks. For example, allocate a buffer smaller than needed:
+
+```c
+if (sz < n) memcpy(buf, src, sz); // a very large sz may become a negative integer!
+```
 
 ### Use-after-free vulnerabilities
 
-Attention is to access use-after-free data by dangling pointers.
+Most past attacks were based on out-of-bounds writes. But recently, attention is to access __use-after-free__ data by dangling pointers. The typical use in attacks is victim uses a dangling pointer to access critical data, however the block is already freed and reallocated for processing the attacker's input.
+
+A __dangling pointer__ is a variable in a programming language that points to a memory location that is no longer valid or has been deallocated.
 
 ## Systematic study of memory errors
 
+In this section, we are going to take a look the memory errors in a systematic view. The idea is to get a general view of memory errors.
+
 ### Memory errors
 
-A memory error happens when an object accessed using a pointer expression is
-different from the one intended by the programmer.
+A memory error happens when an object accessed using a pointer expression is different from the one intended by the programmer. There are two types of memory errors:
 
-- Spatial error: out-of-bounds access, access using a corrupted pointer, uninitialized pointer access
-- Temporal error: access to objects that have been freed
+- __Spatial error__: out-of-bounds access, access using a corrupted pointer, uninitialized pointer access
+- __Temporal error__: access to objects that have been freed, dangling pointers, applicable to stack and heap allocated data
 
-Most attacks used to be based on spatial errors, but today, temporal errors have
-become very important.
+Most attacks used to be based on spatial errors, but today, temporal errors have become very important.
 
-Typical attacks involve an out-of-bounds write to corrupt a pointer.
-This means that most attacks rely on multiple memory errors.
+- __dobule free__
+- __use-after-free__
+
+Typical attacks involve an out-of-bounds write to corrupt a pointer. This means that most attacks rely on multiple memory errors.
 
 - Stack Smaching: out-of-bounds write + use of a corrupted pointer as return address
 - Heap Overflow: out-of-bounds write + corrupted pointer for write and corrupted pointer as target
 
-### Defenses
+### Overview of memory error defenses
 
 Memory error defenses can divide into two categories:
 
-- Prevent memory corruption
-- Disrupt exploits (guarding solutions)
+- __Prevent memory corruption__
+- __Disrupt exploits__ (guarding solutions)
 
 ### Prevent memory corruption
 
-Detect and stop memory corruption before it happens.
-It is a subclass of spatial errors, where we detect access past the end of valid objects.
-All spatial errors can be detected by recognizing pointer arithmetic that crosses object boundaries.
+Detect and stop memory corruption before it happens. It is a subclass of spatial errors, where we detect access past the end of valid objects. All spatial errors can be detected by recognizing pointer arithmetic that crosses object boundaries.
 
 ### Disrupt exploits
 
-Protect attractive targets against common ways to corrupt them.
+Corruption is not stopped always. Therefore, __guarding solutions__ is the answer:
 
-- Disrupt corruption
-- Disrupt take-overs (Randomization-based defenses)
-- Disrupt payload execution
+- Disrupt __corruption__
+- Disrupt __take-overs__ (Randomization-based defenses)
+- Disrupt __payload execution__
+
+#### Disrupt corruption
+
+Protet attractive targets agains common ways to corrupt them.
 
 #### Disrupt take-overs (Control-flow hijack)
 
-A key issue for an attack is using their controlled inputs to induce errors with predictable effects.
-Their approach is to exploit software bugs to overwrite critical data.
+A key issue for an attack is using their controlled inputs to induce errors with predictable effects. Their approach is to exploit software bugs to overwrite critical data:
 
-- Relative address attacks (RA)
-- Absolute address attacks (AA)
+- __Relative address attacks__ (RA)
+- __Absolute address attacks__ (AA)
 - RA + AA attacks
 
-In order to disrupt them, we use __benign diversity__.
+In order to disrupt them, we use __Benign diversity__:
 
-- Preserver functional behaviour
-- Randomize attack behavior
+- __Preserver functional behaviour__: on benign inputs, diversified program behaves exactly like the original program.
+- __Randomize attack behavior__: On inputs that exercise a bug, diversified program behaves differently from the original program.
 
 #### Automated introduction of diversity
 
-The idea is to use transformations that preserver program semantics.
-The focus is on programming language semantics.
+The idea is to use transformations that preserver program semantics. The focus is on programming language semantics, to randomize implementation aspects that aren't specified in the programming language. Examples:
 
-- Address Space Randomization (ASR)
-- Data Space Randomization (DSR)
-- Instruction Set Randomization (ISR)
+- __Address Space Randomization (ASR)__: randomize memory locations of code or data objects.
+- __Data Space Randomization (DSR)__: randomize low-level representation of data objects.
+- __Instruction Set Randomization (ISR)__: randomize interpretation of low-level code.
 
-Without using randomization, memory errors corrupt memory in a predictable way.
-This means the attacker knows the exact data item that is corrupted (RAR defense),
-and the correct value to use for corruption (AAR or DSR defenses)
+Without using randomization, memory errors corrupt memory in a predictable way.This means the attacker knows the exact data item that is corrupted (RAR defense), and the correct value to use for corruption (AAR or DSR defenses)
 
 ##### Absolute Address Randomization (AAR/ASLR)
 
@@ -209,32 +274,28 @@ Randomize base address of data and code.
 
 Limits:
 
+- Incomplete implementations
 - Relative address data-only attacks
 - Information leakage attacks
 - Brute-force in space domain using NOP padding or Heap spray
 
 ##### Relative Address Randomization (RAR)
 
-Randomize distance between static objects.
-This is done in compile time.
-Randomize distance between stack objects.
+Randomize distance between static objects. This is done in compile time. Randomize distance between stack objects. Since the entropy is limited if the number of variables is small, better option is __safe stack__. Heap allocations can be randomized without help from compilers.
 
-To make ROP (return oriented programming) infeasible:
+##### Fine-grained code randomization (RAR for code)
+
+To make __ROP (return oriented programming)__ infeasible:
 
 - Permute order of functions
 - Randomly rearrange instructions within a function
 
 Benefits of RAR:
 
-- Defeats the overwrite step, as well the step that uses the overwritten pointer value
-- Provides higher entropy
-- Unlike AAR, a single information leak is insufficient to derandomize everything
+- Defeats the overwrite step, as well the step that uses the overwritten pointer value.
+- Provides higher entropy.
+- Unlike AAR, a single information leak is insufficient to derandomize everything.
 
 ##### Data Space Randomization (DSR)
 
-The basic idea is to randomize data representation.
-We XOR each data object with a distinct random mask.
-Therefore, effect of data corruption becomse non-deterministic.
-
-Unlike AAR, DSR protects all data, not just pointers.
-
+The basic idea is to randomize data representation. We XOR each data object with a distinct random mask. Therefore, effect of data corruption becomse non-deterministic. Unlike AAR, DSR protects all data, not just pointers. Effective against relative address as well as absolute address attacks. It also has a large entropy.
