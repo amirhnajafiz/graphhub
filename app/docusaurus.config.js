@@ -8,20 +8,20 @@ import {themes as prismThemes} from 'prism-react-renderer';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'DOCS',
-  tagline: 'This is my personal notes and blogs website.',
+  title: 'GraphHub',
+  tagline: 'GraphHub is my dedicated personal website for organizing and tracking my notes on various computer science topics. It serves as a central hub where I can collect, categorize, and easily access my insights and learnings. From algorithms and data structures to software development practices and system architecture, GraphHub allows me to document my thoughts, share knowledge, and revisit important concepts whenever needed. My goal is to create a comprehensive resource that reflects my journey in the field of computer science, making it easier to find information and foster a deeper understanding of the subjects I am passionate about.',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
   url: 'https://amirhnajafiz.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/docs/',
+  baseUrl: '/graphhub/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'amirhnajafi', // Usually your GitHub org/user name.
-  projectName: 'DOCS', // Usually your repo name.
+  projectName: 'graphhub', // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -64,19 +64,15 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Replace with your project's social card
-      image: 'img/docusaurus-social-card.jpg',
+      image: 'img/graphhub.jpeg',
       navbar: {
-        title: 'DOCS',
-        logo: {
-          alt: 'DOCS',
-          src: 'img/logo.svg',
-        },
+        title: 'GraphHub',
         items: [
           {
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
             position: 'left',
-            label: 'Notes',
+            label: 'Graphs',
           },
           {to: '/blog', label: 'Blog', position: 'left'},
           {
