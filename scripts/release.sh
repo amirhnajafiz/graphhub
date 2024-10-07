@@ -3,9 +3,7 @@
 # check if the app build directory exists
 if [ -d "app/build" ]; then
     echo "Moving new app build files..."
-    mv app/build/* ./
-    mv app/build/.nojekyll ./.nojekyll
-    rmdir app/build
+    mv app/build/ public/
     echo "New app files have been moved successfully."
 else
     echo "Error: app/build directory does not exist."
