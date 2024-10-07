@@ -1,9 +1,9 @@
 import clsx from 'clsx';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import Layout from '@theme/Layout';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
 
-import Heading from '@theme/Heading';
+import Layout from '@theme/Layout';
+import HomePage from '@site/src/components/HomePage';
+
 import styles from './index.module.css';
 
 function HomepageHeader() {
@@ -24,9 +24,9 @@ export default function Home() {
       title={`${siteConfig.title}`}
       description="Graphhub, created by amirhnajafiz">
       <main>
-        <HomepageFeatures />
+        <HomePage />
       </main>
-      <HomepageHeader />
+      <HomepageHeader style={{marginBottom: "0px"}} />
     </Layout>
   );
 }

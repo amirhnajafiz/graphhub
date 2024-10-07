@@ -25,8 +25,8 @@ Two important factors are here, encryption algorithm and encryption key.
 
 - Plaintext = unencrypted
 - Ciphertext = encrypted
-- Encryption = E(k, X)
-- Decryption = D(k, X)
+- Encryption = $E_{k}(X)$
+- Decryption = $D_{k}(X)$
 - Cryptanalysis = discover k, X or both
 
 ### Types of attacks in cryptography
@@ -100,21 +100,21 @@ A send message to B:
 
 ### RSA Algorithm
 
-- Alphabet: (0, ... , n-1)
-- Encryption: C = M^e mod n
-- Decryption: M = C^d mod n = M^(ed) mod n
+- Alphabet: $\{0, \ldots , n-1\}$
+- Encryption: $C = M^e \mod n$
+- Decryption: $M = C^d \mod n = M^{ed} \mod n$
 - Both sender and receiver know n
 - Sender knows e, while only the receiver knows d
-- It is possible to find d, e, and n such that M^(ed) = M mod n
+- It is possible to find d, e, and n such that $M^{ed} \equiv M \mod n$
 - It is infeasible to determine d from e
 
 #### RSA key generation
 
 - Select two large prime numbers p and q
-- Calculate n = p \times q
-- Calculate the numbers less than n that are prime to it. PI(n) = (p-1)(q-1)
-- Select an e less than PI(n) that is relatively prime to it
-- Calculate d = e^{-1} mod PI(n)
+- Calculate $n = p \times q$
+- Calculate the numbers less than n that are prime to it $\phi(n) = (p-1)(q-1)$.
+- Select an e less than $\phi(n)$ that is relatively prime to it
+- Calculate $d = e^{-1} \mod \phi(n)$
 
 In order to find big prime numbers, we can use _Miller-Rabin_ test for primality.
 
