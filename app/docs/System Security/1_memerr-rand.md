@@ -277,7 +277,9 @@ Limits:
 - Incomplete implementations
 - Relative address data-only attacks
 - Information leakage attacks
-- Brute-force in space domain using NOP padding or Heap spray
+- Brute-force in space domain using NOP padding or __Heap spray__
+
+Heap spray exploits compromise an application by placing shellcode onto the heap then executing it through various vectors.
 
 ##### Relative Address Randomization (RAR)
 
