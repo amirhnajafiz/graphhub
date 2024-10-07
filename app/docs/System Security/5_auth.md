@@ -89,14 +89,14 @@ However, attackers can use replay attacks. Therefore, one-time passwords come ha
 
 #### One-time passwords
 
-Start with a password P to generate a sequence of one time passwords Q1, ..., Qn.
+Start with a password P to generate a sequence of one time passwords $Q_{1}, \ldots , Q_{n}$.
 However, no password should provide any info about other passwords.
-Then, using a one-way hash function: Ok = H^(N-k)(P).
+Then, using a one-way hash function: $O_{k} = H^{N-k}(P)$.
 
 So, the protocol goes as follow:
 
-1. System sends user (i)
-2. User sends system H^(N-i)(P)
+1. System sends user $(i)$
+2. User sends system $H^{N-i}(P)$
 
 The system need not store P, just the previous OTP (one-time password).
 
@@ -114,7 +114,7 @@ If the client is successful in solving the challenge, the server continues the c
 ##### SSH
 
 - Password based authentication
-    1. Server sends a KU(S) to client
+    1. Server sends a $KU_{S}$ to client
     2. Client uses that key to send the password and a random number
     3. Communication is encrypted using the client random number
 - Public key based authentication
@@ -181,4 +181,3 @@ a on-to-many match.
 
 - Using passpoints: select points on an image
 - Select images from an array
-
