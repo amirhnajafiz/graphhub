@@ -76,7 +76,7 @@ const config = {
       // Replace with your project's social card
       image: 'img/graphhub.jpeg',
       navbar: {
-        style: 'primary',
+        style: 'dark',
         title: 'GraphHub',
         items: [
           {
