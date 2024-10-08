@@ -26,7 +26,7 @@ Attacker has access to hashed passwords, and can make an unbounded number of att
 - slow down offline attacks
     - make hash algorithm slower
     - make attacker repeat work for every user by using `salt`
-      - Original proposal: $DES_{password || salt}^25 (0)$
+      - Original proposal: $DES_{password || salt}^{25} (0)$
 - protect password file
     - `/etc/passwd` is global however `/etc/shadow` is readable only by root
 
