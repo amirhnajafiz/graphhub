@@ -6,7 +6,7 @@ export default function HomePage() {
   };
   return (
     <div style={style}>
-      <img width={"600px"} src={logo} role="img" />
+      <img width={"500px"} src={logo} role="img" />
     </div>
   );
 }
