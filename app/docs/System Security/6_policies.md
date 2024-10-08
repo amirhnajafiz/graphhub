@@ -138,6 +138,16 @@ They are tickets to gain access to a resource. Combine objects and access rights
 - File descriptors
 - Some cookies in web applications
 
+### In Linux
+
+To handle capabilities, you can use `libcap` tools. To install them, you can use `libcap2-bin` or `libcap`.
+
+After installing it, you can setcap or drop them, or view them using following commands:
+
+- managing capabilities for a binary: `sudo setcap cap_dac+ep /path/to/bin`
+- drop capabilities: `sudo capsh --drop=cap_dac_override -- -c "command"`
+- check capabilities of a process: `cat /proc/<pid>/status | grep Cap`
+
 ### Implementation drawbacks
 
 They are more difficult to implement than ACLs. They are also difficult to manage, therefore, capabilities in their purest form are not widely used in OSes.
