@@ -5,13 +5,13 @@ FROM node:18-alpine AS build
 WORKDIR /app
 
 # Copy package.json and package-lock.json
-COPY ../app/package*.json ./
+COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
 # Copy the entire app directory to the container
-COPY ../app .
+COPY . .
 
 # Build the React app for production
 RUN npm run build
