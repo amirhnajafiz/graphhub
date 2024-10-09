@@ -134,7 +134,7 @@ Websites use password authentication over https
 
 ### Using Master passwords
 
-A master password is used to encrypt all other passwords. The focus on creating one strong password.
+A master password is used to encrypt all other passwords. The focus on creating one strong password. When using it, user password choices will no longer be constrained by memorability concerns. As a result, a user can create random passwords for any domain, encrypt it using the master password and store it anywhere.
 
 ### Benefits of password managers
 
