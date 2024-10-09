@@ -207,7 +207,23 @@ Allows read-downs, but downgrade subject to the level of the subject.
 
 #### Alternative Approaches
 
-The key goal is to mitigate damage that may result from all pwerful root privileges. So, we should break down root privilege into a number of sub-privileges, and decouple user privileges from program privileges. Like:
+The key goal is to mitigate damage that may result from all powerful root privileges. So, we should break down root privilege into a number of sub-privileges, and decouple user privileges from program privileges. Like:
 
-- Domain and type enforcement : SELinux
+- Domain and type enforcement: SELinux (Redhat), AppArmor (Debian, Ubuntu)
 - Linux capabilities
+
+## Domain and Type Enforcement (DTE)
+
+All subjects belong to __domains__. Users have default domains, but not all their processes belong to the same domain. Objects belong to __types__. DTE policies specify which domains have what access rights on which types.
+
+Processes can transite to another domain, typically when executing another program. These domain transitions are an important feature.
+
+### DTE and SELinux
+
+__Security-enhanced Linux (aks SELinux)__ combines standard UNIX DAC with DTE. Intuitively, the idea is to make access rights a function of user, program, or object.
+
+Generally speaking, MLS requires us to trust a program, or fully trust it. In contrast, DTE allows us to express limited trust that is a function of the program. It grants a program only those rights that it needs to carry out its function.
+
+### SELinux vs Information Flow
+
+In practice, DTE has turned out to be _one policy per application_. Therefore, scalability is an issue. In addition, SELinux policies are quite complex. On the other hand, information flow policies are simpler and closely related to high-level objectives. But, neither approach is easy enough for widespread use.
