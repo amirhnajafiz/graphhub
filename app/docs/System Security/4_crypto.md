@@ -131,7 +131,7 @@ In order to find big prime numbers, we can use __Miller-Rabin__ test for primali
 
 ### Conventional Vs Public key crypto
 
-Conventional crypto is fast, on the other hand, public key crypto is much slower. But, key distribution is easier with public keys. Therefore, the solution is to use conventional crypto for encrypting bulk data, and use public key crypto to set up keys for such encryption.
+Conventional crypto (__symmetric or single-key cryptography__) is fast, on the other hand, public key crypto is much slower. But, key distribution is easier with public keys. Therefore, the solution is to use conventional crypto for encrypting bulk data, and use public key crypto to set up keys for such encryption.
 
 Use __certificates__ and __certification authorities__ (CAs) to establish authenticity of public keys.
 
@@ -178,11 +178,32 @@ In simple words, a digital certificate is public key of a principal encrypted wi
 
 Certificates allow key exchange without real-time access to public-key authority. A certificate binds identity to public key. An example is `X.509` certificates.
 
+### Generate Digital Certificates
+
+__Let’s Encrypt__ provides free SSL certificates. You can automate the process with __Certbot__, which is the recommended tool for obtaining and renewing __Let’s Encrypt__ certificates.
+
+```sh
+sudo apt-get install certbot
+sudo certbot certonly --standalone -d yourdomain.com # certificates will be at /etc/letsencrypt/live/yourdomain.com/ directory
+sudo certbot renew --dry-run # certificates are only valid for 90 days
+# To set up automatic renewals, Certbot usually installs a cron job or systemd timer when you install it. You can check your /etc/crontab or systemd services for automatic renewal configuration.
+```
+
+You can also purchase a certificate from other CAs, such as `DigiCert`, `GoDaddy`, or `Comodo`. Moreover, for self-signed certificates, you can use `openssl`.
+
+```sh
+openssl req -newkey rsa:2048 -nodes -keyout private.key -out csr.csr
+openssl x509 -signkey private.key -in csr.csr -req -days 365 -out cert.crt
+```
+
 ## Notes and Comments
 
 - Encryption with private key provides a way for digital signatures. In particular, it provides __nonrepudiability__ property. However, in practice, nonrepudiablility isn't always guranteed, since users can claim that their private key was stolen and that someone else that stole the key must haved signed a certain document.
-- Some of the advantages of public key cryptography over symmetric key cryptography are:
+- Some of the advantages of __public key cryptography__ over symmetric key cryptography are:
   - Key distribution is easier with public key cryptography.
   - Public key infrastructures are more scalabale, as they don't need any centralized servers.
   - Public key crypto provides nonrepudiability without requiring a central, fully trusted server.
-- In typical SSL deployments, to authorize the client, a client should generate a random number (session key) and encrypt it using the servers public key, after that, the communication uses symmetric cryptography using that random number.
+- In typical SSL deployments, to authorize the client, a client should generate a random number (__session key__) and encrypt it using the servers public key, after that, the communication uses symmetric cryptography using that random number.
+- When using RSA, you may find multiple p and q numbers to generate your keys. The best option for p and q in this case, is the one option in which p and q are closer to each other. Because, it forces the attacker to check more bits for each of them in order to find one.
+- When using reccurence methods for creating OTPs, make sure to use an algorithm that makes the attacker unable to find $P_{i}$ using any previous passwords.
+- SSLs can also be self-signed by the application's developer or company. However, these certificates are not accepted by browsers.
