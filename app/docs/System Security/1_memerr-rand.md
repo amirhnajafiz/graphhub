@@ -301,3 +301,12 @@ Benefits of RAR:
 ##### Data Space Randomization (DSR)
 
 The basic idea is to randomize data representation. We XOR each data object with a distinct random mask. Therefore, effect of data corruption becomse non-deterministic. Unlike AAR, DSR protects all data, not just pointers. Effective against relative address as well as absolute address attacks. It also has a large entropy.
+
+## Notes and Comments
+
+- In memory exploits, sometimes the base address of the injected code is uncertain. To deal with it, the attacker uses a `NOP-sled`. A `NOP` operation jumps over instructions without doing anything.
+- In a callee to caller operation, the local variables of caller will be referenced relative to `BP` (base pointer). Therefore, if the attacker wants to control the caller variables, it should change the BP to point to a different location. Moreover, the attacker can set the value of these variables relative to the new location of `BP`.
+- One good solution to prevent Stack Smashing attacks is to use a __Safe Stack__. Meaning that the compiler creates two stacks: (i) a safe stack in which all of the control data and simple variable are stored, and (ii) a second stack that stores arrays, or more generally, any variable whose address is taken.
+- In Heap memory defense using a Canary value, the value should be the first field in the heap block. It should have a random value that is unpredictable. And, it's value should be checked before any of the heap block fields are accessed.
+- If you can somehow inject code, it can figure out the randomness. In other words, randomization does not provide much protection against malicious code; but it can protect benign programs from vulnerabilities such as buffer overflow.
+- `GOT` is a table of function pointers that is used to dispatch calls to shared libraries. Typically, heap overflow attacks are used to overwrite GOT entries, say, the entry corresponding to the read system call.
