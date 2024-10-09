@@ -189,3 +189,7 @@ Handlers installed using signal or sigaction syscalls. These handlers use a stac
 - `SIG_DFL` (default hanlder
 
 Signals can be blocked but there is no queue. A signal needs care because handlers execute concurrently with the program.
+
+## Notes and Comments
+
+- The __sticky bit__ is a permission bit that protects the files within a directory. If the directory has the sticky bit set, a file can be deleted only by the file owner, the directory owner, or by a privileged user.

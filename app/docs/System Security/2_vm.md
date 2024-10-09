@@ -161,3 +161,7 @@ It uses __namespaces__ and __cgroups__ to isolate its containers. It also has a 
 - Limit further using linux capabilities.
 - Use seccomp-bpf to limit system calls that can be made by processes within the container.
 - Avoid using untrusted software.
+
+## Notes and Comments
+
+- __Fault isolation__ means that a fault occurring in one module will not corrupt a different module. Operating systems use hardware features (such as page tables or segmentation harware) to realize fault isolation between user processes.
