@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.5.2">
 <title data-rh="true">Authentication | GraphHub</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://amirhnajafiz.github.io/graphhub/img/graphhub.jpeg"><meta data-rh="true" name="twitter:image" content="https://amirhnajafiz.github.io/graphhub/img/graphhub.jpeg"><meta data-rh="true" property="og:url" content="https://amirhnajafiz.github.io/graphhub/docs/System Security/auth"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Authentication | GraphHub"><meta data-rh="true" name="description" content="Authentication is to ensure that the principal is who it claims to be. It covers user authentication and authentication between systems."><meta data-rh="true" property="og:description" content="Authentication is to ensure that the principal is who it claims to be. It covers user authentication and authentication between systems."><link data-rh="true" rel="icon" href="/graphhub/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://amirhnajafiz.github.io/graphhub/docs/System Security/auth"><link data-rh="true" rel="alternate" href="https://amirhnajafiz.github.io/graphhub/docs/System Security/auth" hreflang="en"><link data-rh="true" rel="alternate" href="https://amirhnajafiz.github.io/graphhub/docs/System Security/auth" hreflang="x-default"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.24/dist/katex.min.css" integrity="sha384-odtC+0UGzzFL/6PNoE8rX/SPcQDXBJ+uRepguP4QkPCm2LBxH3FA3y+fKSiJ+AmM" crossorigin="anonymous"><link rel="stylesheet" href="/graphhub/assets/css/styles.3b7036f8.css">
-<script src="/graphhub/assets/js/runtime~main.51f03070.js" defer="defer"></script>
+<script src="/graphhub/assets/js/runtime~main.5c17c8d5.js" defer="defer"></script>
 <script src="/graphhub/assets/js/main.33e4513b.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -131,7 +131,7 @@
 <li>stolen devices</li>
 </ul>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="using-master-passwords">Using Master passwords<a href="#using-master-passwords" class="hash-link" aria-label="Direct link to Using Master passwords" title="Direct link to Using Master passwords">​</a></h3>
-<p>A master password is used to encrypt all other passwords. The focus on creating one strong password.</p>
+<p>A master password is used to encrypt all other passwords. The focus on creating one strong password. When using it, user password choices will no longer be constrained by memorability concerns. As a result, a user can create random passwords for any domain, encrypt it using the master password and store it anywhere.</p>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="benefits-of-password-managers">Benefits of password managers<a href="#benefits-of-password-managers" class="hash-link" aria-label="Direct link to Benefits of password managers" title="Direct link to Benefits of password managers">​</a></h3>
 <ul>
 <li>Allows strong passwords unique to each website.</li>
@@ -139,16 +139,16 @@
 <li>Computers are not easily phished.</li>
 </ul>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="biometrics">Biometrics<a href="#biometrics" class="hash-link" aria-label="Direct link to Biometrics" title="Direct link to Biometrics">​</a></h3>
-<p>Authenticate by recognizing some aspect of human physiology, anatomy, skill or trait.</p>
+<p>Authenticate by recognizing some aspect of human physiology, anatomy, skill or trait. It can be <strong>physiological</strong> or <strong>behavioral</strong>. It is convenience, it protects against poor choice of passwords, and it is more difficult to steal. However, it needs special equipment and not 100% reliable.</p>
 <h4 class="anchor anchorWithStickyNavbar_LWe7" id="issues">Issues<a href="#issues" class="hash-link" aria-label="Direct link to Issues" title="Direct link to Issues">​</a></h4>
 <ul>
-<li>False match or acceptance rate, &quot;fraud rate&quot;</li>
-<li>False non-match/rejection rate, &quot;insult rate&quot;<!-- -->
+<li>False match or acceptance rate (FMR/FAR), <strong>&quot;fraud rate&quot;</strong></li>
+<li>False non-match/rejection rate (FNMR/FRR), <strong>&quot;insult rate&quot;</strong>
 <ul>
-<li>there is a trade-off between the two rates</li>
+<li>there is a trade-off between these two rates</li>
 </ul>
 </li>
-<li>Verification (pair-wise comparison) vs Identification (one-to-many comparison)</li>
+<li><strong>Verification</strong> (pair-wise comparison) vs <strong>Identification</strong> (one-to-many comparison)</li>
 </ul>
 <h4 class="anchor anchorWithStickyNavbar_LWe7" id="handwritten-signatures">Handwritten signatures<a href="#handwritten-signatures" class="hash-link" aria-label="Direct link to Handwritten signatures" title="Direct link to Handwritten signatures">​</a></h4>
 <p>Routinely used in transactions and contracts. Recognition may be manual, machine-assisted or completely mechanical.</p>
