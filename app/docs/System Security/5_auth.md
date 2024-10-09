@@ -144,14 +144,14 @@ A master password is used to encrypt all other passwords. The focus on creating 
 
 ### Biometrics
 
-Authenticate by recognizing some aspect of human physiology, anatomy, skill or trait.
+Authenticate by recognizing some aspect of human physiology, anatomy, skill or trait. It can be __physiological__ or __behavioral__. It is convenience, it protects against poor choice of passwords, and it is more difficult to steal. However, it needs special equipment and not 100% reliable.
 
 #### Issues
 
-- False match or acceptance rate, "fraud rate"
-- False non-match/rejection rate, "insult rate"
-  - there is a trade-off between the two rates
-- Verification (pair-wise comparison) vs Identification (one-to-many comparison)
+- False match or acceptance rate (FMR/FAR), __"fraud rate"__
+- False non-match/rejection rate (FNMR/FRR), __"insult rate"__
+  - there is a trade-off between these two rates
+- __Verification__ (pair-wise comparison) vs __Identification__ (one-to-many comparison)
 
 #### Handwritten signatures
 
