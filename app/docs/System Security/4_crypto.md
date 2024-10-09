@@ -22,7 +22,9 @@ In a message transfer between A and B, we can have four types of concerns:
 
 ## Cryptography
 
-Encode the data in a manner that makes it accessible only to authorized parties. Two important factors are here, __encryption algorithm__ and __encryption key__. Since secure algorithms are hard to develop and does not beyond a few users (security by obsurity, seeks to keep a system secure by keeping knowledge of it secret), need to preserver secrecy of key.
+Encode the data in a manner that makes it accessible only to authorized parties. Two important factors are here, __encryption algorithm__ and __encryption key__. Since secure algorithms are hard to develop and does not beyond a few users (security by obscurity, seeks to keep a system secure by keeping knowledge of it secret), need to preserver secrecy of key.
+
+__Security by Obscruity__ is not a good method. Attackers always manage to find bugs one way or another. If source code is published, experts may be able to identify and report vulnerabilities before they are exploited, thus increasing security.
 
 ### Terminology
 
@@ -41,6 +43,8 @@ In all these types, we assume that the attacker knows the encryption algorithm.
 3. __Chosen plain text__ : attacker can select the plain text and see its encrypted version.
 4. __Chosen cipher text__ : attacker can select see the plain text from encrypted version.
 5. __Chosen text__ : attacker can chose the plain text and see its encrypted version.
+
+In theory, the cryptographic algorithms have to be resistant to ciphertext only attacks. In reality, however, this is no sufficient. Some messages are much more frequently present in the traffic than others, and these messages are predictable. This is particularly true in the connection establishment phase, when the protocol mandates certain messages to be exchanged. Because the text of these messages can be perdicted, that means that the attacker knows the corresponding plaintext. So, crypographic algorithms have to be resistant to know plaintext attacks.
 
 ## Steganography
 
@@ -170,4 +174,15 @@ Encrypting the whole message for signature purposes is too inefficient. The solu
 
 Certificates are issued by a CA (certificate authorithy). As everyone knows the public keys of the CA, a certificate for a principal A is simply A's public key that is encrypted with CA's private key.
 
+In simple words, a digital certificate is public key of a principal encrypted with CA's private key.
+
 Certificates allow key exchange without real-time access to public-key authority. A certificate binds identity to public key. An example is `X.509` certificates.
+
+## Notes and Comments
+
+- Encryption with private key provides a way for digital signatures. In particular, it provides __nonrepudiability__ property. However, in practice, nonrepudiablility isn't always guranteed, since users can claim that their private key was stolen and that someone else that stole the key must haved signed a certain document.
+- Some of the advantages of public key cryptography over symmetric key cryptography are:
+  - Key distribution is easier with public key cryptography.
+  - Public key infrastructures are more scalabale, as they don't need any centralized servers.
+  - Public key crypto provides nonrepudiability without requiring a central, fully trusted server.
+- In typical SSL deployments, to authorize the client, a client should generate a random number (session key) and encrypt it using the servers public key, after that, the communication uses symmetric cryptography using that random number.
