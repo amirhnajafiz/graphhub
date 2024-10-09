@@ -32,18 +32,17 @@ Implementations:
     - the AC-matrix column describing access rights on an object are stored with the object
 - __Capabilities__
     - row-wise representation of AC-matrix, held by the user corresponding to the row
-    - user should not change them, therefore comes with cryptographu mechanisms
+    - user should not change them, therefore comes with cryptography mechanisms
 
 ### Managing permissions
 
-In systems, manageability is improved using indirection Groups and Roles (RBAC). It gives the features of inheritance and negative permissions.
+In systems, manageability is improved using indirection __Groups and Roles (RBAC, role based access control)__. It gives the features of inheritance and negative permissions.
 
 ### Implemetation of DAC on UNIX
 
 #### Objects
 
-All resources are files, Each file has an owner and group owner.
-Permissions are divided into three groups (file owner, owner group, everyone else). And 3 bits of permission for each part (read/write/execute).
+All resources are files. Each file has an __owner__ and __group owner__. Permissions are divided into three groups (file owner, owner group, everyone else). And 3 bits of permission for each part (read/write/execute). Also, today, they come with one sticky bit.
 
 For directories:
 
@@ -63,7 +62,9 @@ Subjects inherit the userid, group and supplemantry groups of the parent. File p
 - __Real__: the real user that is logged on, and on whose behalf a process is running
 - __Saved__: allows processes to temporarily relinquish privileges but then restore original privileges
 
-#### In Linux
+### Managing access in Linux
+
+There are three important entities:
 
 - __Owner__: the user who created a file or directory is its owner.
 - __User__: any person or system component with a user account on the system.
@@ -77,26 +78,15 @@ user1:x:1001:1001::/home/user1:/bin/bash
 alice:x:1002:1002::/home/alice:/bin/bash
 ```
 
+#### Files permissions
+
 Every file or directory in Linux has an owner and belongs to a group:
 
 ```sh
 -rw-r--r-- 1 user1 group1 1024 Oct  7 10:00 file.txt
 ```
 
-The following commands are used for manage users and groups:
-
-- add a user: `useradd <username>`
-- set user a password: `passwd <password>`
-- create a group: `groupadd <groupname>`
-- add a user to a group: `usermod -aG <group> <user>`
-- view group memberships: `groups <username>`
-
-To change file and directory permissions, these commands are used:
-
-- change ownership: `chown <user>:<group> <file>`
-- change permissions: `chmod <permissions> <file>`
-
-These permissions are for owner, group, and others. Each digit represents the sum of permissions:
+The permissions are for owner, group, and others. Each digit represents the sum of permissions:
 
 - 4 = Read
 - 2 = Write
@@ -107,6 +97,21 @@ For example, `755` means:
 - Owner: read/write/execute
 - Group: read/execute
 - Others: read/execute
+
+To change file and directory permissions, these commands are used:
+
+- change ownership: `chown <user>:<group> <file>`
+- change permissions: `chmod <permissions> <file>`
+
+#### User and Group management
+
+The following commands are used for manage users and groups:
+
+- add a user: `useradd <username>`
+- set user a password: `passwd <password>`
+- create a group: `groupadd <groupname>`
+- add a user to a group: `usermod -aG <group> <user>`
+- view group memberships: `groups <username>`
 
 ##### Add user for SSH
 
@@ -162,14 +167,14 @@ However, they provide a better framework than ACLs when one or more of the follo
 
 There are limitations for DAC:
 
-- _Trojan Horse_ problem: assumes that users authorize all actions of their processes, but what if the process does not follow it?
-- Provides no protection if a resource owner did not bother to set the ACL properly
+- _Trojan Horse_ problem: DAC assumes that users authorize all actions of their processes, but what if the process does not follow it? Or, users cannot fully authorize their processes because of their complexity?
+- DAC provides no protection if a resource owner did not bother to set the ACL properly.
 
-To overcome these problems, MAC moves the responsibility to a central point, typically the system administrator.
+To overcome these problems, MAC moves the responsibility to a central point, typically the __system administrator__.
 
-### Multi-Level security (MSL)
+### Multi-Level Security (MSL)
 
-Access control policies do not provide any way to control the manner in which information is used. Once an entity is given access to some data, it can use this information in any way. MLS policies control information flow, and hence control how information is used.
+Access control policies do not provide any way to control the manner in which information is used. Once an entity is given access to some data, it can use this information in any way. MLS policies control __information flow__, and hence control how information is used.
 
 #### Confidentiality Policies
 
@@ -179,8 +184,8 @@ An object is labeled with a level L (unclassified, classified, secret, top secre
 
 To prevent leakage of sensitive information, we ensure:
 
-1. No read-up : a subject S can read object O only if $C(S) \geq L(O)$
-2. No write-down : a subject can write an object O only if $L(O) \geq C(S)$
+1. No __read-up__: a subject S can read object O only if $C(S) \geq L(O)$
+2. No __write-down__: a subject can write an object O only if $L(O) \geq C(S)$
 
 This ensures that information can flow only upwards in terms of confidentiality level.
 
@@ -188,8 +193,8 @@ This ensures that information can flow only upwards in terms of confidentiality 
 
 Designed to ensure integrity rather than confidentiality. We want to keep higher level subjects safe from lower level ones. So any higher level can write to their lower level, however it only can read from higher level.
 
-- No read-down : a subject S can read object O only if $C(S) \leq L(O)$
-- No write-up : a subject S can write an object O only if $C(S) \geq L(O)$
+- No __read-down__: a subject S can read object O only if $C(S) \leq L(O)$
+- No __write-up__: a subject S can write an object O only if $C(S) \geq L(O)$
 
 ##### Low Water-Mark Policy (LOMAC)
 
@@ -197,8 +202,8 @@ Allows read-downs, but downgrade subject to the level of the subject.
 
 ### Problems with Information Flow
 
-- Label creep, as more and more objects become sensitive, its difficult for the system to be used by lower-clearance subjects.
-- No controlled mechanism for making exceptions.
+- __Label creep__, as more and more objects become sensitive, its difficult for the system to be used by lower-clearance subjects.
+- No controlled mechanism for making __exceptions__.
 
 #### Alternative Approaches
 
