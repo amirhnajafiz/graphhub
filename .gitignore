@@ -6,9 +6,6 @@
 # Testing
 /coverage
 
-# Build output
-/build
-
 # Cache
 /.cache
 /.parcel-cache
