@@ -93,7 +93,7 @@ Attacker needs to control the arguments to this function. Since the attacker con
 
 Typicall attack will be executed by running /bin/bash by using return to libc and controlling the arguments on stack.
 
-### Revasion 1.2: Return-Oriented Programming (ROP)
+### Evasion 1.2: Return-Oriented Programming (ROP)
 
 In this technique, an attacker gains control of the call stack (stack pointer) to hijack program control flow and then executes carefully chosen machine instruction sequences that are already present in the machine's memory, called __gadgets__.
 
