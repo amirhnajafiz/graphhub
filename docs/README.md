@@ -1,4 +1,4 @@
-# The Handbook
+# What is the Handbook?
 
 The Handbook is my dedicated personal website for organizing and tracking my notes on various computer science topics. It serves as a central hub where I can collect, categorize, and easily access my insights and learnings.
 
