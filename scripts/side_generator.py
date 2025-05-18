@@ -59,7 +59,7 @@ def main():
     # find all directories
     directories = list_directories(path)
 
-    lines = []
+    lines = ["- [Tags](tags.md)"]
 
     # add directories and their markdown files as children
     for directory in sorted(directories):
