@@ -1,4 +1,3 @@
-- [Home](README.md)
 - [Distributed systems](distributed_systems/index.md)
 - [System security](system_security/index.md)
   - [Memory Errors: Exploits and Defenses](system_security/01_memerr-rand.md)
