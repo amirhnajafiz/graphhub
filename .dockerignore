@@ -1,4 +1,10 @@
 .gitignore
+
+.github/
 .git/
+
 .docusaurus/
 node_modules/
+
+scripts/
+build/
