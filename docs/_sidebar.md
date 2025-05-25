@@ -1,5 +1,8 @@
 - [Home](README.md)
 - [Distributed systems](distributed_systems/index.md)
+- [Gpu](gpu/index.md)
+- [Kubernetes](kubernetes/index.md)
+- [Linux](linux/index.md)
 - [System security](system_security/index.md)
   - [Memory Errors: Exploits and Defenses](system_security/01_memerr-rand.md)
   - [Processor and Virtual Machine Security](system_security/02_vm.md)
