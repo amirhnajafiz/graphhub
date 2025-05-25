@@ -1,4 +1,4 @@
-- [Home](README.md)
+- [Home](home.md)
 - [Computer networks](computer_networks/index.md)
   - [DNS](computer_networks/01_dns.md)
   - [CDN](computer_networks/02_cdn.md)

@@ -30,7 +30,7 @@ def main():
     # find all directories
     directories = list_directories(path)
 
-    lines = ["- [Home](README.md)"]
+    lines = ["- [Home](home.md)"]
 
     # add directories and their markdown files as children
     for directory in sorted(directories):
