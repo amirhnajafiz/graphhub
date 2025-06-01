@@ -1,13 +1,11 @@
 <!-- _coverpage.md -->
 
+<img src="../public/bg.png" width="400">
+
 <h1 class="big-title"> The Handbook </h1>
 
-## the great handbook of computers
-
-### created by Amir Zadeh
-
-#### since 2024
+<h4>By amirhnajafiz - since 2024 </h4>
 
 <!-- background color -->
 
-![color](#f0f0f0)
+![color](#f1f1f1)
