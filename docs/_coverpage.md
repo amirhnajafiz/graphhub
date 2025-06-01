@@ -1,6 +1,6 @@
 <!-- _coverpage.md -->
 
-<img src="../public/bg.png" width="400">
+<img src="public/bg.png" width="400">
 
 <h1 class="big-title"> The Handbook </h1>
 
