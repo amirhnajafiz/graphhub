@@ -16,7 +16,7 @@
   - [PAXOS](distributed_systems/02_paxos.md)
   - [PBFT](distributed_systems/03_pbft.md)
   - [2 Phase Commit](distributed_systems/04_2pc.md)
-  - [Consistancy](distributed_systems/05_consistancy.md)
+  - [Consistency](distributed_systems/05_consistancy.md)
   - [Blockchains](distributed_systems/06_blockchains.md)
 - [Gpu](gpu/index.md)
 - [Kubernetes](kubernetes/index.md)
